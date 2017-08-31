@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["Shikugawa@gmail.com"]
 
   spec.summary       = %q{TracePoint extension library}
-  spec.description   = %q{Use TracePoint more easily }
+  spec.description   = %q{Use TracePoint more easily}
   spec.homepage      = "https://github.com/Shikugawa/Easytrace"
   spec.license       = "MIT"
 
