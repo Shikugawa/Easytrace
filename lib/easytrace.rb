@@ -1,22 +1,26 @@
-require "easytrace/version"
-
-module Easytrace
-    @@DEFINED_METHODS = [:start, :stop, :all_enable, :all_disable].freeze
+class Easytrace
+    @@DEFINED_METHODS = [:initialize, :all_enable, :all_disable].freeze
     
-    def start(*args, &blk)
+    def initialize(*args, &blk)
         @trace ||= []
-        blc = block_given? ? Proc.new{ |tr| p tr unless tr.defined_class != 'EasyTrace' && @@DEFINED_METHODS.include?(tr.method_id) } : blk
-        args.each do |opts|
-            @trace << TracePoint.new(opts, &blc)
+
+        args.each do |symbol|
+            @trace << TracePoint.new(symbol) do |tr| 
+                unless tr.defined_class != 'Easytrace' && @@DEFINED_METHODS.include?(tr.method_id)
+                    case tr.event
+                    when :call
+                        p "#{tr.method_id}: started!"
+                    when :return
+                        p "#{tr.method_id}: stopped!"
+                    end
+                end
+            end
         end
 
         all_enable
+        yield if block_given?
     end
-
-    def stop
-       all_disable
-    end
-
+    
     private
     def all_enable
         @trace.each do |trace_obj|
